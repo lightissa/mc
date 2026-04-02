@@ -1,0 +1,15 @@
+---
+- name: Install MicroCloud and Dependencies
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install MicroCloud and its supplementary snaps
+      snap:
+        name: "{{ item }}"
+        state: present
+        channel: latest/stable
+      loop:
+        - lxd
+        - microceph
+        - microovn
+        - microcloud

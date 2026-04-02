@@ -1,0 +1,10 @@
+---
+# Fichier de variables pour le groupe 'microcloud'
+# Toutes les variables définies ici seront appliquées aux serveurs du groupe [microcloud] 
+
+# Réseau
+microcloud_subnet: "192.168.1.0/24"
+microcloud_uplink: "eth1"
+
+# Exemple d'autres options si vous décidiez d'utiliser des variables dans votre playbook Ansible
+# (dans votre template Jinja2 on peut utiliser {{ microcloud_subnet }} à la place de l'IP en dur)

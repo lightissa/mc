@@ -1,0 +1,22 @@
+---
+- name: Initialize MicroCloud using Preseed
+  hosts: all
+  become: yes
+  tasks:
+    - name: Create directory for configuration
+      file:
+        path: /opt/microcloud
+        state: directory
+        mode: '0755'
+
+    - name: Generate the MicroCloud preseed file from template
+      template:
+        src: templates/microcloud-preseed.yaml.j2
+        dest: /opt/microcloud/preseed.yaml
+        mode: '0600'
+
+    - name: Initialize MicroCloud cluster
+      shell: "cat /opt/microcloud/preseed.yaml | microcloud preseed"
+      # Note : Cette tâche sera en "changed" à chaque lancement si on ne met pas de condition. 
+      # On peut limiter l'exécution si le cluster est déjà initialisé.
+      ignore_errors: yes

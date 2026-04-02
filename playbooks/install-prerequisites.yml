@@ -1,0 +1,30 @@
+---
+- name: Install Requisites for Microcloud Support
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update APT cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install snapd (Required for MicroCloud)
+      apt:
+        name: snapd
+        state: present
+
+    - name: Ensure snapd is started and enabled
+      systemd:
+        name: snapd
+        state: started
+        enabled: yes
+
+    - name: Install core snap (Ensure snapd up-to-date)
+      snap:
+        name: core
+        state: present
+
+    - name: Install openvswitch-switch (often needed for advanced networking)
+      apt:
+        name: openvswitch-switch
+        state: present

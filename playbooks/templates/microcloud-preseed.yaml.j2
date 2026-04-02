@@ -1,0 +1,16 @@
+lookup_subnet: "192.168.1.0/24"
+
+# Interface réseau physique utilisée pour le trafic de sortie OVN
+ovn_uplink_interface: "eth1"
+
+# Configuration des disques pour le stockage distribué Ceph
+disks:
+  ceph:
+    - path:
+        filter: "/dev/sdb"
+        mode: "exact"
+      wipe: true
+    - path:
+        filter: "/dev/sdc"
+        mode: "exact"
+      wipe: true
