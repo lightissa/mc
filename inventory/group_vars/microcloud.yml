@@ -1,10 +1,42 @@
 ---
-# Fichier de variables pour le groupe 'microcloud'
-# Toutes les variables définies ici seront appliquées aux serveurs du groupe [microcloud] 
+# Variable file for the 'microcloud' group
+# All variables defined here will be applied to servers in the [microcloud] group
 
-# Réseau
-microcloud_subnet: "192.168.1.0/24"
-microcloud_uplink: "eth1"
+lookup_subnet: "10.0.0.0/24"
+lookup_timeout: 300
+session_passphrase: "83P27XWKbDczUyE7xaX3pgVfaEacfQ2qiQ0r6gPb"
+session_timeout: 300
+initiator: microcloud01
+initiator_address: 10.0.0.1
+ovn_uplink_interface: eth1
 
-# Exemple d'autres options si vous décidiez d'utiliser des variables dans votre playbook Ansible
-# (dans votre template Jinja2 on peut utiliser {{ microcloud_subnet }} à la place de l'IP en dur)
+ceph:
+  cephfs: true
+  internal_network: 10.0.1.0/24
+  public_network: 10.0.0.0/24
+
+ovn:
+  ipv4_gateway: 192.0.2.1/24
+  ipv4_range: 192.0.2.100-192.0.2.254
+
+storage:
+  local:
+    - find: "size > 10GiB && size < 50GiB && type == nvme"
+      find_min: 1
+      find_max: 1
+      wipe: true
+    - find: "size > 10GiB && size < 50GiB && type == hdd && block_size == 512 && model == 'Samsung %'"
+      find_min: 3
+      find_max: 3
+      wipe: false
+  ceph:
+    - find: "size > 10GiB && size < 50GiB && type == nvme"
+      find_min: 1
+      find_max: 2
+      wipe: true
+    - find: "size > 10GiB && size < 50GiB && type == hdd && block_size == 512 && model == 'Samsung %'"
+      find_min: 3
+      find_max: 8
+      wipe: false
+
+

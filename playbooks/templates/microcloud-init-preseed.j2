@@ -1,0 +1,49 @@
+initiator: "{{ initiator | default(initiator_node | default(groups['microcloud'][0] if groups['microcloud'] else inventory_hostname)) }}"
+
+lookup_subnet: "{{ lookup_subnet }}"
+{% if lookup_timeout is defined %}
+lookup_timeout: {{ lookup_timeout }}
+{% endif %}
+{% if session_passphrase is defined %}
+session_passphrase: "{{ session_passphrase }}"
+{% endif %}
+{% if session_timeout is defined %}
+session_timeout: {{ session_timeout }}
+{% endif %}
+
+systems:
+{% for host in groups['microcloud'] | default([]) %}
+- name: {{ host }}
+  address: "{{ hostvars[host].ansible_host | default(host) }}"
+  {% if hostvars[host].ovn_uplink_interface is defined %}
+  ovn_uplink_interface: "{{ hostvars[host].ovn_uplink_interface }}"
+  {% elif ovn_uplink_interface is defined %}
+  ovn_uplink_interface: "{{ ovn_uplink_interface }}"
+  {% endif %}
+  {% if hostvars[host].ovn_underlay_ip is defined %}
+  ovn_underlay_ip: "{{ hostvars[host].ovn_underlay_ip }}"
+  {% endif %}
+  {% if hostvars[host].storage is defined %}
+  storage:
+{{ hostvars[host].storage | to_nice_yaml(indent=2) | indent(2) }}
+  {% elif hostvars[host].ceph_disks is defined %}
+  storage:
+    ceph:
+{% for disk in hostvars[host].ceph_disks %}
+      - path: "{{ disk }}"
+        wipe: true
+{% endfor %}
+  {% endif %}
+{% endfor %}
+{% if ceph is defined %}
+ceph:
+{{ ceph | to_nice_yaml(indent=2) | indent(0) }}
+{% endif %}
+{% if storage is defined %}
+storage:
+{{ storage | to_nice_yaml(indent=2) | indent(0) }}
+{% endif %}
+{% if ovn is defined %}
+ovn:
+{{ ovn | to_nice_yaml(indent=2) | indent(0) }}
+{% endif %}

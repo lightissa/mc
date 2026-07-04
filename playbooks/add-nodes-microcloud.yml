@@ -1,0 +1,24 @@
+---
+- name: Add New Nodes to MicroCloud Cluster
+  # IMPORTANT: This playbook must be executed on both the initiator (an existing node) 
+  # and the new nodes. You can use '--limit initiator,new_node' or specific groups.
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Create directory for configuration
+      file:
+        path: /opt/microcloud
+        state: directory
+        mode: '0755'
+
+    - name: Generate the MicroCloud join preseed file
+      template:
+        src: templates/microcloud-join-preseed.j2
+        dest: /opt/microcloud/join-preseed.yaml
+        mode: '0600'
+
+    - name: Execute join/add via preseed
+      shell: "cat /opt/microcloud/join-preseed.yaml | microcloud preseed"
+      ignore_errors: yes
+      # Note: the action will be performed in parallel on the initiator and on the new server.

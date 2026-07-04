@@ -1,0 +1,5 @@
+---
+# Ceph disk configuration for microcloud01
+ceph_disks:
+ - /dev/sdb
+ - /dev/sdc

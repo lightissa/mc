@@ -1,6 +1,6 @@
 ---
 - name: Initialize MicroCloud using Preseed
-  hosts: all
+  hosts: "{{ groups['microcloud'][0] }}"
   become: yes
   tasks:
     - name: Create directory for configuration
@@ -11,12 +11,12 @@
 
     - name: Generate the MicroCloud preseed file from template
       template:
-        src: templates/microcloud-preseed.yaml.j2
+        src: templates/microcloud-init-preseed.j2
         dest: /opt/microcloud/preseed.yaml
         mode: '0600'
 
     - name: Initialize MicroCloud cluster
       shell: "cat /opt/microcloud/preseed.yaml | microcloud preseed"
-      # Note : Cette tâche sera en "changed" à chaque lancement si on ne met pas de condition. 
-      # On peut limiter l'exécution si le cluster est déjà initialisé.
+      # Note: This task will be "changed" on every run if no condition is set. 
+      # You can limit execution if the cluster is already initialized.
       ignore_errors: yes
